@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String?
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  auctions  Auction[]
+  bids      Bid[]
+}
+
+model Auction {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  startPrice   Int       @default(0)
+  currentPrice Int?      @default(0)
+  startDate    DateTime  @default(now())
+  endDate      DateTime
+  status       AuctionStatus @default(ACTIVE)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  userId       String
+  version      Int       @default(1)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bids         Bid[]
+
+  @@index([status])
+  @@index([endDate])
+}
+
+model Bid {
+  id        String   @id @default(uuid())
+  amount    Int
+  auctionId String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([auctionId])
+  @@index([userId])
+}
+
+enum AuctionStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}

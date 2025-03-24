@@ -89,7 +89,7 @@ export class AuctionWebSocketGateway
     auctionId: string,
     data: { currentPrice: number; highestBid: any },
   ) {
-    this.server.to(`auction:${auctionId}`).emit('auctionUpdate', {
+    this.server.emit('auctionUpdate', {
       auctionId,
       currentPrice: data.currentPrice,
       highestBid: data.highestBid,

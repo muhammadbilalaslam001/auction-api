@@ -12,10 +12,6 @@ build
 .git
 .gitignore
 
-# Environment variables
-.env
-.env.*
-!.env.example
 
 # IDE
 .idea
